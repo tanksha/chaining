@@ -27,26 +27,6 @@
 ;; multiple results are possible, they are returned as a
 ;; superposition.
 
-;; Backward chainer/synthesizer
-;; TODO: Import the curried backward chainer instead of repeating the 
-;; definition here.
-;; Note: Named the function name 'bc' here to avoid importing it twice,
-;; incase both chainers are imported at the same time.
-
-(: bc (-> $a                           ; Knowledge base space
-          Nat                          ; Maximum depth
-          $b                           ; Query
-          $b))                         ; Result
-
-;; Base case
-(= (bc $kb $_ (: $prf $ccln)) (match $kb (: $prf $ccln) (: $prf $ccln)))
-
-;; Recursive step
-(= (bc $kb (S $k) (: ($prfabs $prfarg) $ccln))
-   (let* (((: $prfabs (-> $prms $ccln)) (bc $kb $k (: $prfabs (-> $prms $ccln))))
-          ((: $prfarg $prms) (bc $kb $k (: $prfarg $prms))))
-     (: ($prfabs $prfarg) $ccln)))
-
 ;; Forward DTL Curried
 (: fcc (-> $a                            ; Knowledge base space
            Nat                           ; Maximum depth
@@ -58,10 +38,10 @@
 
 ;; Recursive step
 (= (fcc $kb (S $k) (: $prfarg $prms))
-   (let (: $prfabs (-> $prms $ccln)) (bc $kb $k (: $prfabs (-> $prms $ccln)))
+   (let (: $prfabs (-> $prms $ccln)) (syn $kb $k (: $prfabs (-> $prms $ccln)))
      (fcc $kb $k (: ($prfabs $prfarg) $ccln))))
 (= (fcc $kb (S $k) (: $prfabs (-> $prms $ccln)))
-    (let (: $prfarg $prms) (bc $kb $k (: $prfarg $prms))
+    (let (: $prfarg $prms) (syn $kb $k (: $prfarg $prms))
      (fcc $kb $k (: ($prfabs $prfarg) $ccln))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -3,6 +3,9 @@
 !(import! &self chaining:dtl:forward:curried)
 !(import! &self chaining:dtl:utils)
 
+;; The forward chainer requires the backward chainer to unfold rules backward.
+!(import! &self chaining:dtl:backward:curried)
+
 ;; Knowledge and rule base
 !(bind! &kb (new-space))
 
@@ -27,18 +30,18 @@
 
 ;; Source is always assumed true
 !(assertEqual
-  (fc &kb Z (: a A))
+  (fcc &kb Z (: a A))
   (: a A))
 
 ;; Two step forward with source: A 
 !(assertEqualToResult
-  (fc &kb (fromNumber 2) (: a A))
+  (fcc &kb (fromNumber 2) (: a A))
   ((: a A)
    (: ((ModusPonens ab) a) B)))
 
 ;; Three step forward with source: A 
 !(assertEqualToResult
-  (fc &kb (fromNumber 3) (: a A))
+  (fcc &kb (fromNumber 3) (: a A))
   ((: a A)
    (: ((ModusPonens ab) a) B)
    (: ((ModusPonens bc) ((ModusPonens ab) a)) C)))
